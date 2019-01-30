@@ -36,6 +36,6 @@ for index, res_col in enumerate(res):
     diff += abs(res_col - student_results[index])
 percentage = 100 - abs(diff/sum(res))*100
 
-print student
-print 'Procenat tacnosti:\t'+str(percentage)
-print 'Ukupno:\t'+str(n)
+print (student)
+print ('Procenat tacnosti:\t'+str(percentage))
+print ('Ukupno:\t'+str(n))

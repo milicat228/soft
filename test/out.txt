@@ -1,0 +1,12 @@
+RA 17/2015 Milica Todorovic
+file	sum
+video-0.avi	-32
+video-1.avi	-19
+video-2.avi	-28
+video-3.avi	-57
+video-4.avi	-41
+video-5.avi	21
+video-6.avi	-69
+video-7.avi	11
+video-8.avi	5
+video-9.avi	16
