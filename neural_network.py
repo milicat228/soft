@@ -103,5 +103,3 @@ class NeuralNetwork:
         for image in images:
             network_input.append(image.flatten())
         return self.model.predict(np.array(network_input, np.float32))
-    
-        

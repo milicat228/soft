@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 
 def process_image(image, channel = 2, iterations = 1):
     """Funkcija namenjena za pretprocesiranje pojedinačnih frejmova."""
@@ -11,7 +12,7 @@ def process_image(image, channel = 2, iterations = 1):
     image = cv2.erode(image, kernel, iterations)
     image = cv2.dilate(image, kernel, iterations)
     #globalni treshold prevodi sliku u binarnu
-    ret, image = cv2.threshold(image, 50, 255, cv2.THRESH_BINARY)
+    _, image = cv2.threshold(image, 50, 255, cv2.THRESH_BINARY)    
     return image
 
 def process_region(region):

@@ -21,11 +21,9 @@ def detect_line(image, channel):
   
         
 def process_video(file):
-#kreiranje trackera
-    tracker = t.Tracker()
-
     #učitaj video
     vidcap = cv2.VideoCapture(file)
+
     #učitaj prvu sliku
     success,image = vidcap.read()
     #izvrši detekciju linija
@@ -37,10 +35,13 @@ def process_video(file):
     #cv2.line(copy, (green[0], green[1]), (green[2], green[3]), (0,0,255), 1, cv2.LINE_AA)
     #cv2.imwrite("lines.jpg", copy)
 
+    #kreiranje trackera
+    tracker = t.Tracker(blue, green)
+
     #dalja obrada
     frame_count = 0
     #region_count = 0
-    while success:
+    while success:       
         #obradi prethodnu sliku    
         processed_image = iu.process_image(image)
         #traženje kontura
@@ -49,37 +50,50 @@ def process_video(file):
         detected_contours = []
         for i in range(0, len(contours)):
             contour = contours[i]
-            x,y,w,h = cv2.boundingRect(contour) 
+            _,_,w,h = cv2.boundingRect(contour)
             #odbacuju se sve konture koje imaju roditelja (npr kontura unuar 0)
             #odbaci premale konture (one su šum)  
-            #prvi uslov hvata normalne brojeve, drugi hvata iskošene brojeve    
+            #prvi uslov hvata normalne brojeve, drugi hvata iskošene brojeve 
             if (h >= 15 and h <= 25) or (w > 10 and h >= 14) and (hierarchy[0][i][3] == -1): 
                 detected_contours.append(contour)
                 #region = processed_image[y:y+h+1,x:x+w+1] 
-                cv2.rectangle(image,(x-3,y-3),(x+w+3,y+h+3),(0,255,0),2)
+                #cv2.rectangle(image,(x-3,y-3),(x+w+3,y+h+3),(0,255,0),2)
                 #region = iu.process_region(region)   
                 #prediction = network.predict([region])  
                 #p = winner(prediction[0])           
                 #cv2.imwrite("area_region_" + str(region_count)+ "_" + str(frame_count)+ "_" + str(p) + ".jpg", region)             
                 #region_count += 1
-        #cv2.imwrite("images/image_" + str(frame_count)+ ".jpg", image)
-        #učitaj sledeću sliku  
-
+        #cv2.imwrite("images/image_" + str(frame_count)+ ".jpg", processed_image)
+        #učitaj sledeću sliku 
         tracker.process_frame(detected_contours, frame_count, processed_image)
-        tracker.draw_all_traces(image)
-        #cv2.imwrite("images/what" + str(frame_count) + ".jpg", image)
+        #tracker.draw_all_traces(image)
+        #cv2.imwrite("images/with_traces" + str(frame_count) + ".jpg", image)
         success,image = vidcap.read()
         frame_count += 1
 
-    blue_sum = tracker.line_sum(blue)
-    green_sum = tracker.line_sum(green)
-    print('RESULT: ' + str(- green_sum + blue_sum))
+    #print('blue')
+    blue_sum = tracker.line_sum(0)
+    #print('green')
+    green_sum = tracker.line_sum(1)
+    #print('RESULT: ' + str(- green_sum + blue_sum))
+    return blue_sum - green_sum
 
 
 def main():
-        for i in range(0,10):
-                print('Working on: ' + 'data/videos/video-' + str(i) + '.avi')
-                process_video('data/videos/video-' + str(i) + '.avi')
-
+    res = [-25, -18, -3, -64, -35, 17, -68, 10, -5, 25] 
+    student_results = []
+    for i in range(0,10):
+        print('Working on: ' + 'data/videos/video-' + str(i) + '.avi')
+        result = process_video('data/videos/video-' + str(i) + '.avi')
+        student_results.append(result)  
+        print(str(i + 1) + ' from 10 finished. Result: ' + str(student_results[i]) + ' Expected: ' + str(res[i]))
+    diff = 0
+    for index, res_col in enumerate(res):
+        diff += abs(res_col - student_results[index])
+    percentage = 100 - abs(diff/sum(res))*100
+    print(student_results)        
+    print('Percentage: ' + str(percentage))
+            
+       
 if __name__== "__main__":
   main()
