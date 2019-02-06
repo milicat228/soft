@@ -214,7 +214,7 @@ class Tracker:
              #pokušaj da ga nađeš među izgubljenim
              if len(self.lost_objects):
                 min_dist_from_lost = self.find_min_distance(contour, self.lost_objects)             
-                if min_dist_from_lost['distance'] < 18: 
+                if min_dist_from_lost['distance'] < 20: 
                     #obj = min_dist_from_lost['object']
                     #print('Found lost: ' + str(obj.id) + ' with value' + str(obj.value()) )
                     min_dist_from_lost['object'].found(contour, frame_number, image)
@@ -288,7 +288,7 @@ class Tracker:
         for _, value in objects.items():
              start = value.first_location
              end = value.get_position()
-             cv2.line(image, (int(start[0]), int(start[1])), (int(end[0]), int(end[1])), color, 2, cv2.LINE_AA) 
+             cv2.line(image, (int(start[0]), int(start[1])), (int(end[0]), int(end[1])), color, 1, cv2.LINE_AA) 
 
 
     def line_sum(self, param):

@@ -31,8 +31,8 @@ def process_video(file):
     green = detect_line(image, 1)
     #nacrtaj linije na slici i sačuvaj sliku
     #copy = image.copy()
-    #cv2.line(copy, (blue[0], blue[1]), (blue[2], blue[3]), (0,0,255), 1, cv2.LINE_AA)   
-    #cv2.line(copy, (green[0], green[1]), (green[2], green[3]), (0,0,255), 1, cv2.LINE_AA)
+    #cv2.line(copy, (blue[0], blue[1]), (blue[2], blue[3]), (0,0,255), 2, cv2.LINE_AA)   
+    #cv2.line(copy, (green[0], green[1]), (green[2], green[3]), (0,0,255), 2, cv2.LINE_AA)
     #cv2.imwrite("lines.jpg", copy)
 
     #kreiranje trackera
@@ -44,20 +44,21 @@ def process_video(file):
     while success:       
         #obradi prethodnu sliku    
         processed_image = iu.process_image(image)
+        #cv2.imwrite("images/proccessed_image" + str(frame_count) + ".jpg", processed_image)
         #traženje kontura
         processed_image, contours, hierarchy = cv2.findContours(processed_image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
         #izdavajanje brojeva
         detected_contours = []
         for i in range(0, len(contours)):
             contour = contours[i]
-            _,_,w,h = cv2.boundingRect(contour)
+            x,y,w,h = cv2.boundingRect(contour)
             #odbacuju se sve konture koje imaju roditelja (npr kontura unuar 0)
             #odbaci premale konture (one su šum)  
             #prvi uslov hvata normalne brojeve, drugi hvata iskošene brojeve 
             if (h >= 15 and h <= 25) or (w > 10 and h >= 14) and (hierarchy[0][i][3] == -1): 
                 detected_contours.append(contour)
                 #region = processed_image[y:y+h+1,x:x+w+1] 
-                #cv2.rectangle(image,(x-3,y-3),(x+w+3,y+h+3),(0,255,0),2)
+                cv2.rectangle(image,(x-3,y-3),(x+w+3,y+h+3),(0,255,0),2)
                 #region = iu.process_region(region)   
                 #prediction = network.predict([region])  
                 #p = winner(prediction[0])           
@@ -67,7 +68,7 @@ def process_video(file):
         #učitaj sledeću sliku 
         tracker.process_frame(detected_contours, frame_count, processed_image)
         #tracker.draw_all_traces(image)
-        #cv2.imwrite("images/with_traces" + str(frame_count) + ".jpg", image)
+        #cv2.imwrite("images/tracked" + str(frame_count) + ".jpg", image)
         success,image = vidcap.read()
         frame_count += 1
 
